@@ -19,6 +19,9 @@ import inquirer from "inquirer";
 import axios from "axios";
 import FormData from "form-data";
 
+// Load environment variables
+dotenv.config();
+
 interface TokenDetails {
   tokenName: string;
   tokenSymbol: string;
@@ -30,7 +33,7 @@ interface TokenDetails {
 }
 
 async function promptUserForTokenDetails(): Promise<TokenDetails> {
-  const answers = await inquirer.prompt([
+  const questions = [
     {
       type: "input",
       name: "tokenName",
@@ -78,9 +81,9 @@ async function promptUserForTokenDetails(): Promise<TokenDetails> {
         return fs.existsSync(input.trim()) || "File does not exist. Please enter a valid path.";
       },
     },
-  ]);
+  ];
 
-  return answers as TokenDetails;
+  return inquirer.prompt(questions) as Promise<TokenDetails>;
 }
 
 async function uploadImageToIPFS(imagePath: string): Promise<string> {
@@ -127,20 +130,16 @@ async function main() {
     const balance = await connection.getBalance(payer.publicKey);
     logger.info(`Wallet balance: ${(balance / LAMPORTS_PER_SOL).toFixed(2)} SOL`);
 
-    //  sufficient funds for transactions (minimum 0.1 SOL)
     if (balance < LAMPORTS_PER_SOL * 0.1) {
-      throw new Error(
-        "Insufficient funds in the wallet. Please ensure your wallet has at least 0.1 SOL."
-      );
+      throw new Error("Insufficient funds in the wallet. Please ensure your wallet has at least 0.1 SOL.");
     }
 
-    
     logger.info("Creating new SPL Token Mint...");
     const mint = await createMint(
       connection,
       payer,
-      payer.publicKey, 
-      payer.publicKey, 
+      payer.publicKey,
+      payer.publicKey,
       decimals
     );
     logger.info(`New Mint created: ${mint.toBase58()}`);
@@ -158,11 +157,11 @@ async function main() {
     const mintAmount = BigInt(premintAmount) * BigInt(10 ** decimals);
     const mintSignature = await mintTo(
       connection,
-      payer,             
-      mint,               
-      tokenAccount.address, 
-      payer,               
-      mintAmount          
+      payer,
+      mint,
+      tokenAccount.address,
+      payer,
+      mintAmount
     );
     logger.info(`Mint transaction signature: ${mintSignature}`);
 
@@ -178,7 +177,7 @@ async function main() {
     if (tokenImageURL) {
       logger.info(`- Token Image URL: ${tokenImageURL}`);
     }
-    
+
     const exportData = {
       tokenName,
       tokenSymbol,
