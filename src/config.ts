@@ -7,6 +7,8 @@ import { logger } from "./utils/logger";
 interface Config {
   keypair: Keypair;
   rpcEndpoint: string;
+  pinataApiKey?: string;
+  pinataSecretApiKey?: string;
 }
 dotenv.config();
 
@@ -36,10 +38,13 @@ function loadConfig(): Config {
   }
 
   const keypair = loadKeypair(SECRET_KEYPAIR_PATH);
+  const { PINATA_API_KEY, PINATA_SECRET_API_KEY } = process.env;
 
   return {
     keypair,
     rpcEndpoint: RPC_ENDPOINT,
+    pinataAPIKey: PINATA_API_KEY,
+    pinataSecretApiKey; PINATA_SECRET_API_KEY,
   };
 }
 
