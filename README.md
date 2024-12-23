@@ -1,5 +1,5 @@
 # Automated-Coin-maker-Solana
-This is a user-friendly tool designed to help you create and mint your own memecoin on the Solana blockchain. Whether you're a seasoned developer or a crypto enthusiast, MemeMint simplifies the process of launching a memecoin by guiding you through each step with interactive prompts and automated scripts.
+This is a user-friendly tool designed to help you create and mint your own memecoin on the Solana blockchain. 
 
 ## Table of Contents
 
